@@ -3,12 +3,14 @@
     <!-- Search widget-->
     <div class="card mb-4">
         <div class="card-header">Search</div>
-        <div class="card-body">
+        <form class="card-body" action="{{ route("searchByPosts") }}" method="GET">
+            @csrf
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
-                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
+                <input class="form-control" type="text" placeholder="Enter search term..." name="q" />
+                <input class="btn btn-primary" id="button-search" type="submit" value="Go!">
+{{--                <button class="btn btn-primary" id="button-search" type="button">Go!</button>--}}
             </div>
-        </div>
+        </form>
     </div>
     <!-- Categories widget-->
     <div class="card mb-4">

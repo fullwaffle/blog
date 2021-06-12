@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 
@@ -15,6 +16,8 @@ use App\Http\Controllers\PostController;
 */
 
 Route::get('/', [PostController::class, 'index']);
+
+Route::get('/search', [SearchController::class, 'searchByPosts'])->name('searchByPosts');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
