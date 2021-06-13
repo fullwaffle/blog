@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -46,7 +47,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('post', ['post' => $post]);
+        $comments = $post->comments;
+
+        return view('post', ['post' => $post, 'comments' => $comments]);
     }
 
     /**
@@ -81,5 +84,12 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //
+    }
+
+    public function sortByCategory(Category $category)
+    {
+        $posts = $category->posts()->paginate(5);
+
+        return view('sort_by_category', ['posts' => $posts, 'category' => $category]);
     }
 }

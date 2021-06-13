@@ -34,9 +34,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                @if($loop->last)
-                                    </div>
-                                @endif
+                        @if($loop->last)
+                            </div>
+                        @endif
                             @continue;
                         @endif
 
@@ -53,6 +53,10 @@
                                         <a class="btn btn-primary" href="{{ route('posts.show', ['post' => $post]) }}">Read more →</a>
                                     </div>
                                 </div>
+                        @if($loop->last)
+                            </div>
+                            </div>
+                        @endif
                             @continue;
                         @endif
 

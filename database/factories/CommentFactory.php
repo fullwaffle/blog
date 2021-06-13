@@ -23,8 +23,10 @@ class CommentFactory extends Factory
     {
         return [
             'user_id' => $this->faker->numberBetween(1, 50),
-            'post_id' => $this->faker->numberBetween(1, 50),
+            'parent_id' => $this->faker->boolean(50) ? $this->faker->numberBetween(1, 50) : null,
             'body' => $this->faker->sentence(),
+            'commentable_id' => $this->faker->numberBetween(1, 50),
+            'commentable_type' => "App\Models\Post",
         ];
     }
 }

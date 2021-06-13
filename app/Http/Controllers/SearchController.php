@@ -17,13 +17,11 @@ class SearchController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(2);
 
-        //get all the categories
-//        $categories = Category::all();
+        $posts->withPath('/search?q=' . $key);
 
         return view('search.index', [
             'key' => $key,
             'posts' => $posts,
-//            'categories' => $categories,
         ]);
     }
 }

@@ -4,11 +4,9 @@
     <div class="card mb-4">
         <div class="card-header">Search</div>
         <form class="card-body" action="{{ route("searchByPosts") }}" method="GET">
-            @csrf
             <div class="input-group">
                 <input class="form-control" type="text" placeholder="Enter search term..." name="q" />
                 <input class="btn btn-primary" id="button-search" type="submit" value="Go!">
-{{--                <button class="btn btn-primary" id="button-search" type="button">Go!</button>--}}
             </div>
         </form>
     </div>
@@ -29,20 +27,20 @@
                         @endif
 
                         @if($loop->last)
-                            <li><a href="#!">{{ $category->name }}</a></li>
+                            <li><a href="{{ route('posts.sortByCategory', $category->slug) }}">{{ $category->name }}</a></li>
                                 </ul>
                             </div>
                         @break
                         @endif
 
                         @if($loop->iteration % 3 === 0)
-                            <li><a href="#!">{{ $category->name }}</a></li>
+                            <li><a href="{{ route('posts.sortByCategory', $category->slug) }}">{{ $category->name }}</a></li>
                                 </ul>
                             </div>
                             <div class="col-sm-6">
                                 <ul class="list-unstyled mb-0">
                         @else
-                            <li><a href="#!">{{ $category->name }}</a></li>
+                            <li><a href="{{ route('posts.sortByCategory', $category->slug) }}">{{ $category->name }}</a></li>
                         @endif
                     @endforeach
                 @endif

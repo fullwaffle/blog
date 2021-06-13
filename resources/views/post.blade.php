@@ -1,12 +1,10 @@
 @extends('layouts.layout')
 
-
 @section('page_title')
     {{ $post->title }}
 @endsection
 
 @section('main')
-
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-8">
@@ -19,8 +17,13 @@
                         <!-- Post meta content-->
                         <div class="text-muted fst-italic mb-2">Posted on {{ $post->created_at->format('F d, Y') }} by {{ $post->user->login }}</div>
                         <!-- Post categories-->
-                        <a class="badge bg-secondary text-decoration-none link-light" href="#!">Web Design</a>
-                        <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
+                        @if(count($post->categories) === 0)
+                            No categories
+                        @else
+                            @foreach($post->categories as $category)
+                                <a class="badge bg-secondary text-decoration-none link-light" href="{{ route('posts.sortByCategory', $category->slug) }}">{{ $category->name }}</a>
+                            @endforeach
+                        @endif
                     </header>
                     <!-- Preview image figure-->
                     <figure class="mb-4"><img class="img-fluid rounded" src="{{ asset('assets/img/900x400.jpg') }}" alt="..." /></figure>
@@ -34,43 +37,27 @@
                     <div class="card bg-light">
                         <div class="card-body">
                             <!-- Comment form-->
-{{--                            <form class="mb-4" method="post" action="{{ route() }}">--}}
-{{--                                @csrf--}}
-{{--                                <textarea class="form-control" rows="3" placeholder="Join the discussion and leave a comment!"></textarea>--}}
-{{--                            </form>--}}
-                            <!-- Comment with nested comments-->
-                            <div class="d-flex mb-4">
-                                <!-- Parent comment-->
-                                <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                <div class="ms-3">
-                                    <div class="fw-bold">Commenter Name</div>
-                                    If you're going to lead a space frontier, it has to be government; it'll never be private enterprise. Because the space frontier is dangerous, and it's expensive, and it has unquantified risks.
-                                    <!-- Child comment 1-->
-                                    <div class="d-flex mt-4">
-                                        <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                        <div class="ms-3">
-                                            <div class="fw-bold">Commenter Name</div>
-                                            And under those conditions, you cannot establish a capital-market evaluation of that enterprise. You can't get investors.
-                                        </div>
+                            @auth
+                                <form class="mb-4" method="post" action="{{ route('comments.store') }}">
+                                    @csrf
+                                    <div class="form-group mb-1">
+                                        <input type="hidden" name="post_id" value="{{ $post->id }}" />
+                                        <input class="form-control" name="comment_body" placeholder="Join the discussion and leave a comment!" type="text">
                                     </div>
-                                    <!-- Child comment 2-->
-                                    <div class="d-flex mt-4">
-                                        <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                        <div class="ms-3">
-                                            <div class="fw-bold">Commenter Name</div>
-                                            When you put money directly to a problem, it makes a good headline.
-                                        </div>
+                                    <div class="form-group">
+                                        <input class="btn btn-warning" value="Add Comment" type="submit">
                                     </div>
-                                </div>
-                            </div>
-                            <!-- Single comment-->
-                            <div class="d-flex">
-                                <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
-                                <div class="ms-3">
-                                    <div class="fw-bold">Commenter Name</div>
-                                    When I look at the universe and all the ways the universe wants to kill us, I find it hard to reconcile that with statements of beneficence.
-                                </div>
-                            </div>
+                                </form>
+                            @else
+                                <h2>Authorize to comment!</h2>
+                            @endauth
+
+                            @if(count($comments) === 0)
+                                <h5>No comments</h5>
+                            @else
+                                @include('partials.comment_replies', ['comments' => $comments, 'post_id' => $post->id, 'margin' => 'mb-4'])
+                            @endif
+
                         </div>
                     </div>
                 </section>
