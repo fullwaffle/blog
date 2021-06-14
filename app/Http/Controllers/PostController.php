@@ -4,17 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\User;
+use App\Services\SortService;
 use Illuminate\Http\Request;
+use Illuminate\View\Factory;
+use Illuminate\View\View;
 
 class PostController extends Controller
 {
+    protected object $sortService;
+
+    public function __construct(SortService $sortService)
+    {
+        $this->sortService = $sortService;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         return view('index', ['posts' => Post::paginate(5)]);
     }
@@ -43,20 +52,18 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @param  Post  $post
+     * @return View
      */
-    public function show(Post $post)
+    public function show(Post $post): View
     {
-        $comments = $post->comments;
-
-        return view('post', ['post' => $post, 'comments' => $comments]);
+        return view('post', ['post' => $post, 'comments' => $post->comments()->get()]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Post  $post
+     * @param  Post  $post
      * @return \Illuminate\Http\Response
      */
     public function edit(Post $post)
@@ -68,7 +75,7 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
+     * @param  Post  $post
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Post $post)
@@ -79,7 +86,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Post  $post
+     * @param  Post  $post
      * @return \Illuminate\Http\Response
      */
     public function destroy(Post $post)
@@ -87,9 +94,9 @@ class PostController extends Controller
         //
     }
 
-    public function sortByCategory(Category $category)
+    public function sortByCategory(Category $category): View
     {
-        $posts = $category->posts()->paginate(5);
+        $posts = $this->sortService->sortByCategory($category)->paginate(5);
 
         return view('sort_by_category', ['posts' => $posts, 'category' => $category]);
     }

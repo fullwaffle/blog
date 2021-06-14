@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
-use App\Models\Post;
+use App\Services\CommentService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    protected object $commentService;
+
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -32,15 +41,15 @@ class CommentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request): RedirectResponse
     {
-        $comment = new Comment;
-        $comment->body = $request->get('comment_body');
-        $comment->user()->associate($request->user());
-        $post = Post::find($request->get('post_id'));
-        $post->comments()->save($comment);
+        $this->commentService->storeComment(
+            $request->user(),
+            $request->get('comment_body'),
+            $request->get('post_id')
+        );
 
         return back();
     }
@@ -90,15 +99,14 @@ class CommentController extends Controller
         //
     }
 
-    public function replyStore(Request $request)
+    public function replyStore(StoreCommentRequest $request): RedirectResponse
     {
-        $reply = new Comment();
-        $reply->body = $request->get('comment_body');
-        $reply->user()->associate($request->user());
-        $reply->parent_id = $request->get('comment_id');
-        $post = Post::find($request->get('post_id'));
-
-        $post->comments()->save($reply);
+        $this->commentService->storeReply(
+            $request->user(),
+            $request->get('comment_body'),
+            $request->get('post_id'),
+            $request->get('comment_id'),
+        );
 
         return back();
     }

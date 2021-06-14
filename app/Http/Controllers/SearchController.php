@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Services\SearchService;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SearchController extends Controller
 {
-    public function searchByPosts(Request $request)
+    protected object $searchService;
+
+    public function __construct(SearchService $searchService)
+    {
+        $this->searchService = $searchService;
+    }
+
+    public function searchByPosts(Request $request): View
     {
         $key = trim($request->get('q'));
 
-        $posts = Post::query()
-            ->where('title', 'like', "%{$key}%")
-            ->orWhere('body', 'like', "%{$key}%")
-            ->orderBy('created_at', 'desc')
-            ->paginate(2);
-
-        $posts->withPath('/search?q=' . $key);
+        $posts = $this->searchService->searchByPost($key);
 
         return view('search.index', [
             'key' => $key,
