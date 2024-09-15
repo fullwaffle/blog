@@ -2,6 +2,13 @@
 
 {% block body %}
 <h1>{{ object.title }}</h1>
+<h5>Author: {{ object.author }}</h5>
+{% if request.user.id == object.author.id %}
+    <p>
+        <a href="">EDIT</a>
+        <a href="">REMOVE</a>
+    </p>
+{% endif %}
 <img src="{{ object.img.url }}" width="800px">
 <br>
 <br>

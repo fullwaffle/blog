@@ -7,6 +7,7 @@ class PostCreateUpdateForm(ModelForm):
     class Meta:
         model = Post
         fields = "__all__"
+        exclude = ["author", "slug"]
 
 
 class CommentCreateUpdateForm(ModelForm):

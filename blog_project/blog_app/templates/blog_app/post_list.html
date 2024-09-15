@@ -2,13 +2,18 @@
 
 {% block body %}
 <h1>Posts list</h1>
-
+{% if user.is_authenticated %}
+<p>
+    <a href="{% url 'blog_app:post-create' %}">CREATE POST</a>
+</p>
+{% endif %}
 <ul>
 {% for post in object_list %}
     <li>
         <img src="{{ post.img.url }}" width="200px">
         <a href="{% url 'blog_app:post-detail' post.slug %}">{{ post.title }}</a>
     </li>
+    <br>
 {% empty %}
     <li>No posts yet.</li>
 {% endfor %}
