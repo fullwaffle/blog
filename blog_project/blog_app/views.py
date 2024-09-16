@@ -1,5 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, DeleteView
 
 from .forms import PostCreateUpdateForm
 from .models import Post
@@ -19,7 +19,7 @@ class PostDetailView(DetailView):
         return context
 
 
-class PostCreate(LoginRequiredMixin, CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostCreateUpdateForm
     template_name = "blog_app/post_create.html"
@@ -28,3 +28,9 @@ class PostCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class PostDeleteView(PermissionRequiredMixin, DeleteView):
+    model = Post
+    success_url = "/"
+    permission_required = "delete_post"
