@@ -5,7 +5,7 @@
 <h5>Author: {{ object.author }}</h5>
 {% if request.user.id == object.author.id %}
     <p>
-        <a href="">EDIT</a>
+        <a href="{% url 'blog_app:post-update' object.slug %}">EDIT</a>
         <a href="{% url 'blog_app:post-delete' object.slug %}">REMOVE</a>
     </p>
 {% endif %}

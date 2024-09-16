@@ -1,5 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    DeleteView,
+    UpdateView,
+)
 
 from .forms import PostCreateUpdateForm
 from .models import Post
@@ -34,3 +40,11 @@ class PostDeleteView(PermissionRequiredMixin, DeleteView):
     model = Post
     success_url = "/"
     permission_required = "delete_post"
+
+
+class PostUpdateView(PermissionRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostCreateUpdateForm
+    template_name = "blog_app/post_edit.html"
+    success_url = "/"
+    permission_required = "change_post"
