@@ -14,6 +14,11 @@
 <br>
 <p>{{ object.content }}</p>
 <hr>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="ADD COMMENT">
+</form>
 {% for comment in comments %}
 <p><strong>{{ comment.author }}</strong> - {{ comment.content }}</p>
 {% endfor %}
