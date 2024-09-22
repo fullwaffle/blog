@@ -41,7 +41,7 @@ class PostDisplayView(FormMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["comments"] = self.object.comments.all()
-        context["views"] = self.object.views.all()
+        context["views"] = self.object.views.all().count()
 
         return context
 
