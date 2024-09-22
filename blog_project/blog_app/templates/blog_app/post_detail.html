@@ -20,7 +20,11 @@
     <input type="submit" value="ADD COMMENT">
 </form>
 {% for comment in comments %}
-<p><strong>{{ comment.author }}</strong> - {{ comment.content }}</p>
+<p>
+    <strong>{{ comment.author }}</strong>
+    <p>{{ comment.content }}</p>
+    <p>Created on: {{ comment.created_on }}</p>
+</p>
 {% if request.user.id == comment.author.id %}
     <a href="{% url 'blog_app:comment-update' object.slug comment.pk %}">EDIT</a>
     <a href="{% url 'blog_app:comment-delete' object.slug comment.pk %}">REMOVE</a>
