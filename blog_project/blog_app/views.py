@@ -1,3 +1,4 @@
+from ipware import get_client_ip
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views import View
@@ -12,7 +13,7 @@ from django.views.generic import (
 from django.views.generic.edit import FormMixin
 
 from .forms import PostCreateUpdateForm, CommentCreateUpdateForm
-from .models import Post, Comment
+from .models import Post, Comment, PostViews
 
 
 class PostListView(ListView):
@@ -23,9 +24,18 @@ class PostDisplayView(FormMixin, DetailView):
     model = Post
     form_class = CommentCreateUpdateForm
 
+    def get_object(self, queryset=None):
+        obj = super().get_object()
+        client_ip = get_user_ip(self.request)
+        if not PostViews.objects.filter(post_id=obj.pk).filter(ip_address=client_ip):
+            PostViews.objects.create(post_id=obj.pk, ip_address=client_ip)
+
+        return obj
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["comments"] = self.object.comments.all()
+        context["views"] = self.object.views.all()
 
         return context
 
@@ -102,3 +112,9 @@ class CommentUpdateView(PermissionRequiredMixin, UpdateView):
         return reverse_lazy(
             "blog_app:post-detail", kwargs={"slug": self.kwargs["slug"]}
         )
+
+
+def get_user_ip(request):
+    client_ip, is_routable = get_client_ip(request)
+
+    return client_ip

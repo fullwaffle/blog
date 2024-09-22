@@ -38,3 +38,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.author}, {self.post}, {self.content}"
+
+
+class PostViews(models.Model):
+    ip_address = models.GenericIPAddressField()
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="views")
