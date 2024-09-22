@@ -12,7 +12,7 @@ from django.views.generic import (
 from django.views.generic.edit import FormMixin
 
 from .forms import PostCreateUpdateForm, CommentCreateUpdateForm
-from .models import Post
+from .models import Post, Comment
 
 
 class PostListView(ListView):
@@ -80,3 +80,25 @@ class PostUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "blog_app/post_edit.html"
     success_url = "/"
     permission_required = "change_post"
+
+
+class CommentDeleteView(PermissionRequiredMixin, DeleteView):
+    model = Comment
+    permission_required = "delete_comment"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "blog_app:post-detail", kwargs={"slug": self.kwargs["slug"]}
+        )
+
+
+class CommentUpdateView(PermissionRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentCreateUpdateForm
+    template_name = "blog_app/comment_edit.html"
+    permission_required = "change_comment"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "blog_app:post-detail", kwargs={"slug": self.kwargs["slug"]}
+        )
