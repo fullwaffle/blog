@@ -16,6 +16,12 @@ from .forms import PostCreateUpdateForm, CommentCreateUpdateForm
 from .models import Post, Comment, PostViews
 
 
+def get_user_ip(request):
+    client_ip, is_routable = get_client_ip(request)
+
+    return client_ip
+
+
 class PostListView(ListView):
     model = Post
 
@@ -112,9 +118,3 @@ class CommentUpdateView(PermissionRequiredMixin, UpdateView):
         return reverse_lazy(
             "blog_app:post-detail", kwargs={"slug": self.kwargs["slug"]}
         )
-
-
-def get_user_ip(request):
-    client_ip, is_routable = get_client_ip(request)
-
-    return client_ip
