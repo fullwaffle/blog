@@ -1,5 +1,5 @@
 from ipware import get_client_ip
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (
@@ -84,23 +84,29 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostDeleteView(PermissionRequiredMixin, DeleteView):
+class PostDeleteView(DeleteView):
     model = Post
     success_url = "/"
-    permission_required = "delete_post"
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
 
 
-class PostUpdateView(PermissionRequiredMixin, UpdateView):
+class PostUpdateView(UpdateView):
     model = Post
     form_class = PostCreateUpdateForm
     template_name = "blog_app/post_edit.html"
     success_url = "/"
-    permission_required = "change_post"
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
 
 
-class CommentDeleteView(PermissionRequiredMixin, DeleteView):
+class CommentDeleteView(DeleteView):
     model = Comment
-    permission_required = "delete_comment"
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
 
     def get_success_url(self):
         return reverse_lazy(
@@ -108,11 +114,13 @@ class CommentDeleteView(PermissionRequiredMixin, DeleteView):
         )
 
 
-class CommentUpdateView(PermissionRequiredMixin, UpdateView):
+class CommentUpdateView(UpdateView):
     model = Comment
     form_class = CommentCreateUpdateForm
     template_name = "blog_app/comment_edit.html"
-    permission_required = "change_comment"
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
 
     def get_success_url(self):
         return reverse_lazy(
